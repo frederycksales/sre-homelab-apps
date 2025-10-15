@@ -1,0 +1,28 @@
+# sre-homelab-apps/apps/podinfo.yml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  # O nome da aplicação que aparecerá na UI do Argo CD
+  name: podinfo
+  # Esta aplicação é gerida pelo Argo CD no seu próprio namespace
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://stefanprodan.github.io/podinfo
+    chart: podinfo
+    targetRevision: "6.9.2"
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: podinfo
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
