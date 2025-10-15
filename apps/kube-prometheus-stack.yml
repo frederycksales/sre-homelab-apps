@@ -1,0 +1,52 @@
+# sre-homelab-apps/apps/kube-prometheus-stack.yml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kube-prometheus-stack
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argd.argoproj.io
+spec:
+  project: default
+
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 51.9.0 
+
+    helm:
+      values: |
+        # --- Configurações Gerais ---
+        # Desativar a exportação de métricas do kubelet, pois o K3s já as expõe de forma diferente
+        kubelet:
+          enabled: false
+
+        # --- Configurações do Prometheus ---
+        prometheus:
+          prometheusSpec:
+            # Habilitar a persistência para os dados do Prometheus
+            # Sem isto, todas as suas métricas seriam perdidas se o pod do Prometheus reiniciasse
+            storageSpec:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: 10Gi
+
+        # --- Configurações do Grafana ---
+        grafana:
+          persistence:
+            enabled: true
+            size: 2Gi
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
