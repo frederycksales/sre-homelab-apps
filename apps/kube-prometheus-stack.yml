@@ -19,13 +19,12 @@ spec:
       releaseName: kube-prometheus-stack
       values: |
         crds:
-          annotations: {}
+          enabled: true
+          keep: false
 
-        # --- General Settings ---
         kubelet:
           enabled: false
 
-        # --- Prometheus Settings ---
         prometheus:
           prometheusSpec:
             storageSpec:
@@ -39,7 +38,6 @@ spec:
             initChownData:
               enabled: false
 
-        # --- Grafana Settings ---
         grafana:
           persistence:
             enabled: true
