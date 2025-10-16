@@ -1,6 +1,6 @@
+# .github/workflows/validate.yml
 name: Validate Kubernetes Manifests
 
-# Run on push or pull request to main
 on:
   push:
     branches: [ main ]
@@ -12,20 +12,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout repository
+      # Step 1: Checkout your repository's code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Lint YAML files under apps/
+      # Step 2: Lint YAML files for basic syntax errors
       - name: Lint YAML files
         uses: ibiqlik/action-yamllint@v3
         with:
           file_or_dir: ./apps
 
-      # Validate Kubernetes schemas with Kubeconform
-      - name: Validate Kubernetes schemas with Kubeconform
-        uses: yannh/kubeconform-action@v0.4.14
+      # Step 3: Log in to GitHub Container Registry
+      - name: Login to GitHub Container Registry
+        run: echo "${{ github.token }}" | docker login https://ghcr.io -u ${GITHUB_ACTOR} --password-stdin
+
+      # Step 4: Run Kubeconform using the official Docker image
+      - name: Run Kubeconform
+        uses: docker://ghcr.io/yannh/kubeconform:latest
         with:
-          kubernetes-version: "1.28.0"
-          skip-crd: true
-          files: ./apps
+          entrypoint: '/kubeconform'
+          args: "-summary -kubernetes-version 1.28.0 ./apps"
