@@ -1,0 +1,98 @@
+# --- Configurações Gerais ---
+# Desativar componentes não essenciais para um estudo básico, se necessário.
+# Aqui, mantemos os principais componentes ativados.
+prometheus-node-exporter:
+  # Recursos baixos para o exportador que corre em cada nó.
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+kube-state-metrics:
+  # Recursos baixos para o kube-state-metrics.
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      cpu: 100m
+      memory: 256Mi
+
+# --- Configuração do Grafana ---
+grafana:
+  # Definir uma senha de administrador previsível para o ambiente de estudo.
+  # EM PRODUÇÃO: Use um segredo do Kubernetes ou um gestor de segredos.
+  adminPassword: "study-password"
+
+  # Simula a persistência de produção para dashboards e configurações, mas com um volume pequeno.[4]
+  persistence:
+    enabled: true
+    type: pvc
+    size: 2Gi
+    # IMPORTANTE: Substitua "your-storage-class" pela StorageClass disponível no seu cluster.
+    storageClassName: "your-storage-class"
+    accessModes:
+      - ReadWriteOnce
+
+  # Recursos mínimos para o Grafana.
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+
+# --- Configuração do Alertmanager ---
+alertmanager:
+  # Manter uma única réplica para poupar recursos.
+  alertmanagerSpec:
+    replicas: 1
+    # Configuração de persistência para silêncios e estados de alerta.
+    storage:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: "your-storage-class" # Substitua pela sua StorageClass.
+          accessModes:
+          resources:
+            requests:
+              storage: 2Gi
+  # Recursos mínimos para o Alertmanager.
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 128Mi
+
+# --- Configuração do Prometheus ---
+prometheus:
+  # Manter uma única réplica para poupar recursos.
+  prometheusSpec:
+    replicas: 1
+    # Retenção de dados curta para manter o uso de disco baixo.
+    retention: 7d
+    # Recursos mínimos para o Prometheus. A memória é o mais importante aqui.
+    resources:
+      requests:
+        cpu: 200m
+        memory: 512Mi
+      limits:
+        cpu: 400m
+        memory: 1Gi
+
+    # Configuração de persistência para os dados de métricas (TSDB).[4, 5]
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          # IMPORTANTE: Substitua "your-storage-class" pela StorageClass disponível no seu cluster.
+          storageClassName: "your-storage-class"
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 8Gi # Tamanho pequeno adequado para um ambiente de estudo.
