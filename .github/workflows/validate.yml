@@ -1,0 +1,29 @@
+name: Validate Kubernetes Manifests
+
+# Run on push or pull request to main
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-manifests:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Lint YAML files under apps/
+      - name: Lint YAML files
+        uses: ibiqlik/action-yamllint@v3
+        with:
+          file_or_dir: ./apps
+
+      # Validate Kubernetes manifests using kubeval
+      - name: Validate Kubernetes schemas with Kubeval
+        uses: instrumenta/kubeval-action@v1
+        with:
+          files: ./apps

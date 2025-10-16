@@ -1,34 +1,34 @@
-# sre-homelab-apps/apps/kube-prometheus-stack.yml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: kube-prometheus-stack
   namespace: argocd
+  labels:
+    app.kubernetes.io/name: kube-prometheus-stack
+    app.kubernetes.io/managed-by: argocd
   finalizers:
-    - resources-finalizer.argd.argoproj.io
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
-
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
-    targetRevision: 51.9.0 
-
+    targetRevision: 78.3.0
     helm:
+      releaseName: kube-prometheus-stack
       values: |
         # --- Configurações Gerais ---
-        # Desativar a exportação de métricas do kubelet, pois o K3s já as expõe de forma diferente
         kubelet:
           enabled: false
 
         # --- Configurações do Prometheus ---
         prometheus:
           prometheusSpec:
-            # Habilitar a persistência para os dados do Prometheus
-            # Sem isto, todas as suas métricas seriam perdidas se o pod do Prometheus reiniciasse
             storageSpec:
               volumeClaimTemplate:
                 spec:
+                  # DIZENDO AO PROMETHEUS PARA USAR O NOSSO ARMAZENAMENTO ZFS-NFS
+                  storageClassName: "zfs-nfs"
                   accessModes: ["ReadWriteOnce"]
                   resources:
                     requests:
@@ -38,6 +38,8 @@ spec:
         grafana:
           persistence:
             enabled: true
+            # DIZENDO AO GRAFANA PARA USAR O NOSSO ARMAZENAMENTO ZFS-NFS
+            storageClassName: "zfs-nfs"
             size: 2Gi
 
   destination:
