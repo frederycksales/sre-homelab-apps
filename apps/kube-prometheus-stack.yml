@@ -9,6 +9,8 @@ metadata:
     app.kubernetes.io/component: monitoring
     app.kubernetes.io/part-of: observability
     app.kubernetes.io/managed-by: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -20,7 +22,7 @@ spec:
     targetRevision: 78.3.0
     helm:
       releaseName: kube-prometheus-stack
-      skipCrds: false
+      skipCrds: true
       values: |
         # Default values optimized for homelab/small clusters
         # For production, adjust resources and replicas
