@@ -66,10 +66,10 @@ prometheus:
     retention: 7d
     retentionSize: 7GB
     walCompression: true
-    initContainers: []
     securityContext:
       runAsNonRoot: true
       runAsUser: 65534
+      runAsGroup: 65534
       fsGroup: 65534
     resources:
       requests:
