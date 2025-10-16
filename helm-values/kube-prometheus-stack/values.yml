@@ -25,6 +25,13 @@ grafana:
     storageClassName: "zfs-nfs"
     accessModes:
       - ReadWriteOnce
+  initChownData:
+    enabled: false
+  securityContext:
+    runAsUser: 65534
+    runAsGroup: 65534
+    fsGroup: 65534
+    runAsNonRoot: true
   resources:
     requests:
       cpu: 100m
@@ -57,8 +64,13 @@ prometheus:
   prometheusSpec:
     replicas: 1
     retention: 7d
-    retentionSize: 7Gi
+    retentionSize: 7GB
     walCompression: true
+    initContainers: []
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 65534
+      fsGroup: 65534
     resources:
       requests:
         cpu: 200m
