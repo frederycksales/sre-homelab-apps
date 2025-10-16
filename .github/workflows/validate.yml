@@ -22,8 +22,10 @@ jobs:
         with:
           file_or_dir: ./apps
 
-      # Validate Kubernetes manifests using kubeval
-      - name: Validate Kubernetes schemas with Kubeval
-        uses: instrumenta/kubeval-action@v1
+      # Validate Kubernetes schemas with Kubeconform
+      - name: Validate Kubernetes schemas with Kubeconform
+        uses: yoyomo/kubeconform-action@v1.2.1
         with:
+          kubernetes-version: "1.28.0"
+          skip-crd: true
           files: ./apps
