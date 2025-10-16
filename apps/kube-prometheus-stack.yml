@@ -18,3 +18,18 @@ spec:
         releaseName: kube-prometheus-stack
         valueFiles:
           - $values/helm-values/kube-prometheus-stack/values.yml
+    - repoURL: https://github.com/frederycksales/sre-homelab-apps
+      targetRevision: main
+      ref: values
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: monitoring
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
