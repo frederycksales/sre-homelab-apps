@@ -36,6 +36,8 @@ spec:
                   resources:
                     requests:
                       storage: 10Gi
+            initChownData:
+              enabled: false
 
         # --- Grafana Settings ---
         grafana:
