@@ -1,0 +1,22 @@
+# helm-values/nfs-provisioner/values.yaml
+
+nfs:
+  server: "10.10.10.1"
+  path: /zfs-storage-1tb/k8s-data
+  reclaimPolicy: Retain
+
+storageClass:
+  name: zfs-nfs
+  defaultClass: false
+  reclaimPolicy: Delete
+  archiveOnDelete: true
+  fixPermissions:
+    enabled: false
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 256Mi

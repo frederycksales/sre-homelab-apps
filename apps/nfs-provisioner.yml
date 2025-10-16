@@ -1,4 +1,4 @@
-# ArgoCD Application for nfs-subdir-external-provisioner
+# sre-homelab-apps/apps/nfs-provisioner.yml
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -12,22 +12,17 @@ metadata:
 spec:
   project: default
 
-  source:
-    repoURL: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
-    chart: nfs-subdir-external-provisioner
-    targetRevision: 4.0.18
-
-    helm:
-      releaseName: nfs-provisioner
-      values: |
-        nfs:
-          server: "10.10.10.1"
-          path: /zfs-storage-1tb/k8s-data
-
-        storageClass:
-          name: zfs-nfs
-          fixPermissions:
-            enabled: false
+  sources:
+    - repoURL: https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+      chart: nfs-subdir-external-provisioner
+      targetRevision: 4.0.18
+      helm:
+        releaseName: nfs-provisioner
+        valueFiles:
+          - $values/helm-values/nfs-provisioner/values.yml
+    - repoURL: https://github.com/frederycksales/sre-homelab-apps
+      targetRevision: main
+      ref: values
 
   destination:
     server: https://kubernetes.default.svc
