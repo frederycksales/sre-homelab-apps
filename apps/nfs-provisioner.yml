@@ -26,6 +26,8 @@ spec:
 
         storageClass:
           name: zfs-nfs
+          fixPermissions:
+            enabled: false
 
   destination:
     server: https://kubernetes.default.svc
