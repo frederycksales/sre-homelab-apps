@@ -43,6 +43,8 @@ spec:
             enabled: true
             storageClassName: "zfs-nfs"
             size: 2Gi
+          initChownData:
+            enabled: false
 
   destination:
     server: https://kubernetes.default.svc
