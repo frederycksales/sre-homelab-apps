@@ -72,6 +72,10 @@ prometheus:
       runAsUser: 65534
       runAsGroup: 65534
       fsGroup: 65534
+    containers:
+      - name: prometheus
+        securityContext:
+          readOnlyRootFilesystem: false
     resources:
       requests:
         cpu: 200m
@@ -79,7 +83,6 @@ prometheus:
       limits:
         cpu: 400m
         memory: 1Gi
-
     storageSpec:
       volumeClaimTemplate:
         spec:
