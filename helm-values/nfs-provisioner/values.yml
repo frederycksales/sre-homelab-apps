@@ -11,7 +11,7 @@ storageClass:
   reclaimPolicy: Delete
   archiveOnDelete: true
   fixPermissions:
-    enabled: false
+    enabled: true
 
 resources:
   requests:
