@@ -27,11 +27,6 @@ grafana:
       - ReadWriteOnce
   initChownData:
     enabled: false
-  securityContext:
-    runAsUser: 65534
-    runAsGroup: 65534
-    fsGroup: 65534
-    runAsNonRoot: true
   resources:
     requests:
       cpu: 100m
@@ -66,10 +61,6 @@ prometheus:
     retention: 7d
     retentionSize: 7GB
     walCompression: true
-    # securityContext:
-    #   runAsNonRoot: true
-    #   runAsUser: 65534
-    #   runAsGroup: 65534
     containers:
       - name: prometheus
         securityContext:
